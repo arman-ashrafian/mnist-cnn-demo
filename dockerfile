@@ -10,4 +10,4 @@ ADD . ./
 
 EXPOSE 5000 
 
-ENTRYPOINT ["python3", "server.py"]
+ENTRYPOINT ["python3", "server.py", "5000", "false"]

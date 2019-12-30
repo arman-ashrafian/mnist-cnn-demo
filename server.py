@@ -6,6 +6,7 @@ import numpy as np
 import base64
 from io import BytesIO
 from PIL import Image
+import sys
 
 MODEL_STATE_FILE = 'model.pt'
 
@@ -46,5 +47,12 @@ def classify():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    if len(sys.argv) != 3:
+        print("python server.py <PORT> <DEBUG: true|false>")
+        sys.exit(1)
+    
+    port = int(sys.argv[1])
+    debug = (sys.argv[2] == 'true')
+
+    app.run(host='0.0.0.0', port=port, debug=debug)
 

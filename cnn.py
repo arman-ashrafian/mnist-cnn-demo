@@ -55,6 +55,5 @@ class CNN(nn.Module):
 def predict(net, img):
     net.eval()
     out = net(img)
-    print(out)
     pred = torch.argmax(out.data, 1)
     return pred.item()

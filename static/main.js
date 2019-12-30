@@ -3,14 +3,15 @@ $(function() {
 
   const CLASSIFY_URL = "/classify";
 
-  const HEIGHT = 500;
-  const WIDTH = 500;
+  const HEIGHT = 300;
+  const WIDTH = 300;
 
   let canvasElem = document.getElementById("canvas");
   let predictionElem = document.getElementById("prediction");
 
   canvasElem.setAttribute("width", WIDTH);
   canvasElem.setAttribute("height", HEIGHT);
+  canvasElem.style = "width:100%"
   context = canvasElem.getContext("2d");
 
   let clickX = new Array();
@@ -20,17 +21,25 @@ $(function() {
 
   /* --------------- mouse/click handlers -------------------*/
 
-  $("#canvas").mousedown(function(e) {
-    let mouseX = e.pageX - this.offsetLeft;
-    let mouseY = e.pageY - this.offsetTop;
+  function getMousePosition(e) {
+    let rect = canvasElem.getBoundingClientRect()
+    let mouseX = e.pageX - rect.x;
+    let mouseY = e.pageY - rect.y;
+    return {x: mouseX, y: mouseY};
+  }
+
+
+  $("#canvas").mousedown((e) => {
+    let mouse = getMousePosition(e);
     paint = true;
-    addClick(mouseX, mouseY, false);
+    addClick(mouse.x, mouse.y, false);
     redraw();
   });
 
-  $("#canvas").mousemove(function(e) {
+  $("#canvas").mousemove((e) => {
     if (paint) {
-      addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+      let mouse = getMousePosition(e);
+      addClick(mouse.x, mouse.y, true);
       redraw();
     }
   });
@@ -47,10 +56,12 @@ $(function() {
 
   $("#classifyBtn").click(classify);
 
-  // Set up touch events for mobile, etc
+  // Set up touch events for mobile, etc.
+  // Transforming touch events into mouse events
   canvasElem.addEventListener(
     "touchstart",
     function(e) {
+      e.preventDefault();
       mousePos = getTouchPos(canvas, e);
       var touch = e.touches[0];
       var mouseEvent = new MouseEvent("mousedown", {
@@ -65,6 +76,7 @@ $(function() {
   canvasElem.addEventListener(
     "touchend",
     function(e) {
+      e.preventDefault();
       var mouseEvent = new MouseEvent("mouseup", {});
       canvas.dispatchEvent(mouseEvent);
     },
@@ -74,6 +86,7 @@ $(function() {
   canvasElem.addEventListener(
     "touchmove",
     function(e) {
+      e.preventDefault();
       var touch = e.touches[0];
       var mouseEvent = new MouseEvent("mousemove", {
         clientX: touch.clientX,
@@ -110,6 +123,7 @@ $(function() {
   function redraw() {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
 
+    // drawing variables
     context.lineJoin = "round";
     context.lineWidth = 20;
     context.fillStyle = "#000000";
@@ -136,9 +150,14 @@ $(function() {
     clickX.length = 0;
     clickY.length = 0;
     clickDrag.length = 0;
+    predictionElem.innerText = "";
   }
 
+  // This function handles sending a POST request to the server
+  // and waits for the response. Inserts response into
+  // <h1 id="prediction"> 
   async function classify() {
+    // get base64 encoding of the image
     let imgData = canvasElem.toDataURL("image/png");
 
     let resp = await fetch(CLASSIFY_URL, {
@@ -152,7 +171,7 @@ $(function() {
     });
 
     respJson = await resp.json();
-    console.log(respJson);
+    log(DEBUG, respJson);
 
     predictionElem.innerText = respJson.number;
   }

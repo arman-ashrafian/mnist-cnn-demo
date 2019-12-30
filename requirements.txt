@@ -1,5 +1,5 @@
-Flask
-numpy 
+conda
 torch
 torchvision
-Pillow
+flask
+numpy

@@ -9,7 +9,7 @@ A demo of a Convolution Neural Network trained on MNIST data. The CNN is exposed
   - This file creates the canvas, implements drawing functionality, and sends base64 encoded image of the canvas to the server.
 * [cnn.py](https://github.com/arman-ashrafian/mnist-cnn-demo/blob/master/cnn.py) 
   - This file creates the CNN Pytorch model.
-* [server.py](https://github.com/arman-ashrafian/mnist-cnn-demo/blob/master/server.js)
+* [server.py](https://github.com/arman-ashrafian/mnist-cnn-demo/blob/master/server.py)
   - This file is the entire Flask server which handles '/' and '/classify' routes.
 
 ## Screenshot
